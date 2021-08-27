@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+data/bldg1/temp_db.db
+data/bldg1/raw_data/*
+data/bldg1/*
+data/bldg2/*
+data/bldg2/raw_data/*
+outputs/bldg1/*
+outputs/bldg2/*
+notebook/private/*
+.vscode
+.Rproj.user
+rhced/__pycache__/*
