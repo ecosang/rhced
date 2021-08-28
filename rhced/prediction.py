@@ -27,8 +27,8 @@ def unit_prediction(unitcode,bldg,start_date,end_date,output_path,new_training=F
 
 
     # read data
-    meter_data=pd.read_csv(f"data/{bldg}/raw_data/meter_data_{unitcode}_{start_date}_{end_date}.csv",parse_dates=['timestamp']) # 
-    thermostat_data=pd.read_csv(f"data/{bldg}/raw_data/thermostat_data_{unitcode}_{start_date}_{end_date}.csv",parse_dates=['timestamp']) # 
+    meter_data=pd.read_csv(f"data/{bldg}/{unitcode}/raw_data/meter_data_{unitcode}_{start_date}_{end_date}.csv",parse_dates=['timestamp']) # 
+    thermostat_data=pd.read_csv(f"data/{bldg}/{unitcode}/raw_data/thermostat_data_{unitcode}_{start_date}_{end_date}.csv",parse_dates=['timestamp']) # 
     
     if new_training:
         scale_const=get_scale_const_template() # scaling constant

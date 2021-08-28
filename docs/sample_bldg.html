@@ -13968,34 +13968,27 @@ a.anchor-link {
     </script>
     <!-- End of mathjax configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
 
-     </div>
-</div>
-</div>
-</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h1><ul>
+<li><p><a href="#Introduction">Introduction</a></p>
+</li>
+<li><p><a href="#Requirements">Requirements</a></p>
+</li>
+<li><p><a href="#Input_data">Input_data</a></p>
+</li>
+<li><p><a href="#Training_prediction">Training_prediction</a></p>
+</li>
+<li><p><a href="#Results">Results</a></p>
+</li>
+<li><p><a href="#Update">Update</a></p>
+</li>
+</ul>
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>This notebook presents an example of how to use <a href="https://github.com/ecosang/rhced"><code>rhced</code></a> module to disaggregate heating and cooling electricity consumption from the net electricity consumption. Based on the sample data obtained from a smart thermostat and power meter, we will give a realistic example of the use of this model for users.</p>
+<h1 id="Requirements">Requirements<a class="anchor-link" href="#Requirements">&#182;</a></h1><p>There are several packages that needs to be installed. Please see <a href="https://github.com/ecosang/rhced#readme">this page</a> for the required packages. In addition, change the directory and add path to use the modules.</p>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
 </div>
-</div>
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14021,14 +14014,26 @@ a.anchor-link {
 </div>
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Change working directory and insert path.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">init_wd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">init_wd</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">init_wd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="c1">#get current working directory</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Current working directory is </span><span class="si">{</span><span class="n">init_wd</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span> <span class="c1"># The default is ~/rhced/notebook</span>
+<span class="c1"># Add ~/rhced directory to the system path so that the module `rhced` can be loaded.</span>
+<span class="n">path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">init_wd</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>  
+<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> 
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;directory </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> is added to system path.&#39;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14048,7 +14053,8 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>c:\Users\ham9\rhced\notebook
+<pre>Current working directory is c:\Users\ham9\rhced\notebook.
+directory c:\Users\ham9\rhced is added to system path.
 </pre>
 </div>
 </div>
@@ -14057,32 +14063,21 @@ a.anchor-link {
 
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Loading modules. Warnings related to theano can be nelgected. If there are errors to import modules, please create a separate environment by using <a href="https://docs.conda.io/en/latest/"><code>conda</code></a> or <code>virtualenv</code> and install <a href="https://github.com/pymc-devs/pymc3"><code>pymc3 &gt; 3.11</code></a> again.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">init_wd</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">rhced.data_utils</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">rhced.training</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">rhced.prediction</span> <span class="kn">import</span> <span class="o">*</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">rhced.data_utils</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># for data pre-processing</span>
+<span class="kn">from</span> <span class="nn">rhced.training</span> <span class="kn">import</span> <span class="o">*</span>   <span class="c1"># training modules</span>
+<span class="kn">from</span> <span class="nn">rhced.prediction</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># prediction modules</span>
 </pre></div>
 
      </div>
@@ -14111,20 +14106,32 @@ a.anchor-link {
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Input_data">Input_data<a class="anchor-link" href="#Input_data">&#182;</a></h1><p>Input data consists of three parts: (1) meta data, (2) thermostat data, and (3) meter data.</p>
+<h2 id="(1)-Meta-data">(1) Meta data<a class="anchor-link" href="#(1)-Meta-data">&#182;</a></h2><p>Each housing unit is classified two hierarchy: <code>bldg</code> and <code>unitcode</code>. <code>bldg</code> indicates the unique identifier of the building or site. <code>unitcode</code> is the unique identifier of the housing unit in a certain <code>bldg</code>. You need to specify the <code>start_date</code> and <code>end_date</code> to get access to the specific data. <code>bldg</code>, <code>unitcode</code>, <code>start_date</code>, and <code>end_date</code> are used for a unique identifier of (2) thermostat data and (3) meter data. So, please follow the same format given below.</p>
+<p>In addition, <code>max_values</code> shows the maximum value of <em>net</em>, <em>heatpump heating</em>, <em>heatpump heating with defrost control</em>, <em>heatpump_cooling</em>, and <em>auxiliary heating</em> in Watt. During the calculation, the results are strictly restricted by the these maximum numbers, so please put numbers with a certain amount of margin. 120-150% can be a good choice.</p>
+<p><code>output_path</code> is used for storing outputs. Also, time interval is the model's time interval. We use 15-min interval due to defrost control. See section 2.2 in the paper.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">unitcode</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span>
-<span class="n">bldg</span><span class="o">=</span><span class="s2">&quot;sample_bldg&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bldg</span><span class="o">=</span><span class="s2">&quot;sample_bldg&quot;</span> <span class="c1"># building identifier. Use location identifier for single family detached house.</span>
+<span class="n">unitcode</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span> <span class="c1"># housing unit identifier. </span>
 
-<span class="n">output_path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span><span class="n">bldg</span><span class="p">,</span><span class="n">unitcode</span><span class="p">)</span>
 <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2016-01-19&quot;</span>
 <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2016-01-25&quot;</span>
-<span class="n">time_interval</span><span class="o">=</span><span class="mi">15</span>
-<span class="n">max_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;net_max&#39;</span><span class="p">:</span><span class="mi">10000</span><span class="p">,</span><span class="s1">&#39;heat_max&#39;</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span><span class="s1">&#39;cool_max&#39;</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span><span class="s1">&#39;aux_max&#39;</span><span class="p">:</span><span class="mi">6000</span><span class="p">,</span><span class="s1">&#39;df_max&#39;</span><span class="p">:</span><span class="mi">4000</span><span class="p">}</span>
+
+<span class="n">max_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;net_max&#39;</span><span class="p">:</span><span class="mi">10000</span><span class="p">,</span><span class="s1">&#39;heat_max&#39;</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span><span class="s1">&#39;cool_max&#39;</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span><span class="s1">&#39;aux_max&#39;</span><span class="p">:</span><span class="mi">6000</span><span class="p">,</span><span class="s1">&#39;df_max&#39;</span><span class="p">:</span><span class="mi">4000</span><span class="p">}</span> <span class="c1"># unit of [Watt]</span>
+
+<span class="c1"># define output_path. In this directory, we will create output_path/bldg/unitcode/ and store the outputs.</span>
+<span class="n">output_path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span><span class="n">bldg</span><span class="p">,</span><span class="n">unitcode</span><span class="p">)</span>
+<span class="n">time_interval</span><span class="o">=</span><span class="mi">15</span> <span class="c1"># due to defrost control, we use 15-min interval data (see Section 2.2 in the paper)</span>
 </pre></div>
 
      </div>
@@ -14132,13 +14139,356 @@ a.anchor-link {
 </div>
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="(2)-Thermostat-data">(2) Thermostat data<a class="anchor-link" href="#(2)-Thermostat-data">&#182;</a></h2><p>Once you put all meta data information, what you need to do is just put the data for training in the specified data directory.</p>
+<p>Then, <code>unit_prediction</code> function in the below read data from the directory.<br>
+For example, in this example, the meta data is <em>bldg</em>:<code>sample_bldg</code>, <em>unitcode</em>:<code>sample</code>, <em>start_date</em>:<code>2016-01-19</code>, <em>end_date</em>: <code>2016-01-25</code>.
+In this case, the thermostat_data's directory is <em>~/rhced/data/sample_bldg/sample/raw_data/thermostat_data_sample_2016-01-19_2016-01-25.csv</em>.
+The meter_data's directory is <em>~/rhced/data/sample_bldg/sample/raw_data/meter_data_sample_2016-01-19_2016-01-25.csv</em>.</p>
+<p>To example data format, we import <em>thermostat_data</em> and <em>meter_data</em>.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># import thermostat_data and meter_data</span>
+<span class="n">thermostat_data_path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span><span class="n">bldg</span><span class="p">,</span><span class="n">unitcode</span><span class="p">,</span><span class="s2">&quot;raw_data&quot;</span><span class="p">,</span><span class="s2">&quot;thermostat_data_sample_2016-01-19_2016-01-25.csv&quot;</span><span class="p">)</span>
+<span class="n">meter_data_path</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span><span class="n">bldg</span><span class="p">,</span><span class="n">unitcode</span><span class="p">,</span><span class="s2">&quot;raw_data&quot;</span><span class="p">,</span><span class="s2">&quot;meter_data_sample_2016-01-19_2016-01-25.csv&quot;</span><span class="p">)</span>
+
+<span class="n">df_thermostat</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">thermostat_data_path</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+<span class="n">df_meter</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">meter_data_path</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><em>thermostat_data</em> has 7 columns.</p>
+<table>
+<thead><tr>
+<th>Column</th>
+<th>Unit</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timestamp</code></td>
+<td></td>
+<td>str</td>
+<td>Timestamp of the data point. The format should be <code>%Y-%m-%d %H:%M:%S</code> (e.g., 2016-01-02 13:15:00)</td>
+</tr>
+<tr>
+<td><code>unitcode</code></td>
+<td></td>
+<td>str</td>
+<td>Housing unit identifier. Any character is fine.</td>
+</tr>
+<tr>
+<td><code>operation</code></td>
+<td></td>
+<td>str</td>
+<td>Operation of HC system. See Section 3.3 in the paper.</td>
+</tr>
+<tr>
+<td><code>T_in</code></td>
+<td>&deg;C</td>
+<td>numeric</td>
+<td>Indoor air temperature</td>
+</tr>
+<tr>
+<td><code>rh_in</code></td>
+<td>-</td>
+<td>numeric</td>
+<td>Indoor air relative humidity in 0-1 scale.</td>
+</tr>
+<tr>
+<td><code>T_out</code></td>
+<td>&deg;C</td>
+<td>numeric</td>
+<td>Outdoor air temperature</td>
+</tr>
+<tr>
+<td><code>rh_out</code></td>
+<td>-</td>
+<td>numeric</td>
+<td>Outdoor air relative humidity in 0-1 scale. </td>
+</tr>
+</tbody>
+</table>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">,</span><span class="n">outputs</span><span class="o">=</span><span class="n">unit_prediction</span><span class="p">(</span><span class="n">unitcode</span><span class="o">=</span><span class="n">unitcode</span><span class="p">,</span><span class="n">bldg</span><span class="o">=</span><span class="n">bldg</span><span class="p">,</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span><span class="n">new_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">force_update</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">time_interval</span><span class="o">=</span><span class="n">time_interval</span><span class="p">,</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span><span class="n">n_training</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span><span class="n">n_inference</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">max_values</span><span class="o">=</span><span class="n">max_values</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_thermostat</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timestamp</th>
+      <th>unitcode</th>
+      <th>operation</th>
+      <th>T_in</th>
+      <th>rh_in</th>
+      <th>T_out</th>
+      <th>rh_out</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2016-01-19 00:00:00</td>
+      <td>sample</td>
+      <td>idle</td>
+      <td>21.111111</td>
+      <td>0.34</td>
+      <td>0.527778</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2016-01-19 00:05:00</td>
+      <td>sample</td>
+      <td>idle</td>
+      <td>21.111111</td>
+      <td>0.34</td>
+      <td>0.444444</td>
+      <td>0.91</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2016-01-19 00:10:00</td>
+      <td>sample</td>
+      <td>idle</td>
+      <td>21.111111</td>
+      <td>0.34</td>
+      <td>0.388889</td>
+      <td>0.91</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><em>meter_data</em> require 3 columns (<code>timestamp</code>, <code>unitcode</code>, and <code>net</code>). But, for the validation purpose, you can have HC data, too.</p>
+<table>
+<thead><tr>
+<th>Column</th>
+<th>Unit</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timestamp</code></td>
+<td></td>
+<td>str</td>
+<td>Timestamp of the data point. The format should be <code>%Y-%m-%d %H:%M:%S</code> (e.g., 2016-01-02 13:15:00)</td>
+</tr>
+<tr>
+<td><code>unitcode</code></td>
+<td></td>
+<td>str</td>
+<td>Housing unit identifier. Any character is fine.</td>
+</tr>
+<tr>
+<td><code>net</code></td>
+<td>W</td>
+<td>numeric</td>
+<td>Average power of net electricity during sampling interval in Watt.</td>
+</tr>
+<tr>
+<td><code>ahu</code></td>
+<td>W</td>
+<td>numeric</td>
+<td>Average power of air handler electricity during sampling interval in Watt (only necessary for validation purpose).</td>
+</tr>
+<tr>
+<td><code>heatpump</code></td>
+<td>W</td>
+<td>numeric</td>
+<td>Average power of heat pump electricity during sampling interval in Watt (only necessary for validation purpose).</td>
+</tr>
+<tr>
+<td><code>hvac</code></td>
+<td>W</td>
+<td>numeric</td>
+<td>Average power of air HC system (i.e., <code>ahu</code>+<code>heatpump</code>) during sampling interval in Watt (only necessary for validation purpose).</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_meter</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timestamp</th>
+      <th>unitcode</th>
+      <th>ahu</th>
+      <th>heatpump</th>
+      <th>hvac</th>
+      <th>net</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2016-01-19 00:00:00</td>
+      <td>sample</td>
+      <td>4.210000</td>
+      <td>34.070000</td>
+      <td>38.280000</td>
+      <td>50.843333</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2016-01-19 00:05:00</td>
+      <td>sample</td>
+      <td>4.180000</td>
+      <td>34.093333</td>
+      <td>38.273333</td>
+      <td>50.973333</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2016-01-19 00:10:00</td>
+      <td>sample</td>
+      <td>4.203333</td>
+      <td>34.426667</td>
+      <td>38.630000</td>
+      <td>51.023333</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Training_prediction">Training_prediction<a class="anchor-link" href="#Training_prediction">&#182;</a></h1><p>The disaggregation model is unsupervised learning, so it is not necessarily to distinguish training/prediction. However, once the model is trained, it is not necessary to train or update model when there is new data. We just want to know the result. Therefore, training indicates the process of model update with new data, and prediction is the process of disaggregation with data and trained model parameters.</p>
+<p>Both training and prediction are done by using <code>unit_prediction</code> function. The function gets all the meta data information (<code>unitcode</code>, <code>bldg</code>, <code>start_date</code>, <code>end_date</code>, <code>max_values</code>,  <code>output_path</code>, and <code>time_interval</code>).</p>
+<p>Other function arguments control the model update.</p>
+<ul>
+<li><code>new_traiing</code>: Whether it is new training. If it is the first training of the specific housing unit, please put <code>True</code>. Otherwise, it should be <code>False</code>|</li>
+<li><code>force_update</code>: When new data is available, the model check if the update is necessary. If new data doesn't include new HC operation, it is not updated. But, for the training purpose, you can force model update by putting <code>True</code> for this variable.|</li>
+</ul>
+<p>The remaining arguments control model inference. <code>n_samples</code> is the number of samples to approximate the posterior distribution. <code>n_training</code> is the number of steps of ADVI learning. It should be large enough to guarantee the stochastic optimization of ADVI convergence. <code>n_inference</code> indicates the number of repeated ADVI. ADVI uses stochastic optimization, so the inference result may be local optima even if the convergence is observed with large <code>n_training</code>. To prevent this, you can repeat the inference with different initial values. This argument controls how many inference you want to repeat.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">,</span><span class="n">outputs</span><span class="o">=</span><span class="n">unit_prediction</span><span class="p">(</span><span class="n">unitcode</span><span class="o">=</span><span class="n">unitcode</span><span class="p">,</span><span class="n">bldg</span><span class="o">=</span><span class="n">bldg</span><span class="p">,</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span><span class="n">max_values</span><span class="o">=</span><span class="n">max_values</span><span class="p">,</span><span class="n">time_interval</span><span class="o">=</span><span class="n">time_interval</span><span class="p">,</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span><span class="n">new_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">force_update</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span><span class="n">n_training</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span><span class="n">n_inference</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14476,7 +14826,7 @@ measurement: 126.32639104166667
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># #load data without training.</span>
@@ -14492,13 +14842,14 @@ measurement: 126.32639104166667
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Visualize the results.</p>
+<h1 id="Results">Results<a class="anchor-link" href="#Results">&#182;</a></h1><p>The results of <code>unit_prediction</code> function are given in two formats. <code>outputs</code> is a dictionary that gives all the posterior distribution of parameter and variables. <code>df</code> is a summary of <code>outputs</code> in a Pandas dataframe format. <code>df</code> gives all the HC signals and 2.5 (lower), 50 (mid), and 97.5 (upper) percentiles of the posterior distribution of each operation's power.</p>
+<p>Since <code>P_{HC_operation}</code> is given in power (Watt), the median of predicted HC kWh value of the data period can be calculated by  <code>np.nanmean(df['P_hc_mid'])/1000*24*n_days</code>. The mean of <code>P_hc_mid</code> is divided by 1000 to make kW, and then it is multiplied the number of hours during the data period to calculate kWh.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -14517,7 +14868,7 @@ measurement: 126.32639104166667
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
 
 
 
@@ -14648,16 +14999,23 @@ measurement: 126.32639104166667
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In addition, you can visualize timeseries prediction results.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_time</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># </span>
+<span class="n">x_time</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_time</span><span class="p">,</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;hc&#39;</span><span class="p">],</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Observation&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_time</span><span class="p">,</span><span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P_hc_lower&#39;</span><span class="p">],</span><span class="n">y2</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P_hc_upper&#39;</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;skyblue&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;95% percentiles&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_time</span><span class="p">,</span><span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P_hc_lower&#39;</span><span class="p">],</span><span class="n">y2</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P_hc_upper&#39;</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;skyblue&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% u</span><span class="s2">ncertainty&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_time</span><span class="p">,</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P_hc_mid&#39;</span><span class="p">],</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Median&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Power [W]&quot;</span><span class="p">,</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
@@ -14676,13 +15034,13 @@ measurement: 126.32639104166667
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>&lt;matplotlib.legend.Legend at 0x1d17bcd4940&gt;</pre>
+<pre>&lt;matplotlib.legend.Legend at 0x14d5f766a30&gt;</pre>
 </div>
 
 </div>
@@ -14703,7 +15061,7 @@ measurement: 126.32639104166667
   <rdf:RDF xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2021-08-27T10:49:03.226538</dc:date>
+    <dc:date>2021-08-28T02:42:29.954377</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -14735,7 +15093,7 @@ z
 " style="fill:#ffffff;"/>
    </g>
    <g id="PolyCollection_1">
-    <path clip-path="url(#pc6e20ce3a1)" d="M 83.764489 266.645455 
+    <path clip-path="url(#p3485856825)" d="M 83.764489 266.645455 
 L 83.764489 266.645455 
 L 84.671683 266.645455 
 L 85.578877 266.645455 
@@ -15717,7 +16075,7 @@ L 84.671683 266.645455
 L 83.764489 266.645455 
 z
 " style="fill:#87ceeb;fill-opacity:0.3;stroke:#87ceeb;stroke-opacity:0.3;"/>
-    <path clip-path="url(#pc6e20ce3a1)" d="M 532.825591 266.645455 
+    <path clip-path="url(#p3485856825)" d="M 532.825591 266.645455 
 L 532.825591 266.645455 
 L 533.732786 245.357623 
 L 534.63998 247.030201 
@@ -15847,7 +16205,7 @@ L 533.732786 156.220996
 L 532.825591 266.645455 
 z
 " style="fill:#87ceeb;fill-opacity:0.3;stroke:#87ceeb;stroke-opacity:0.3;"/>
-    <path clip-path="url(#pc6e20ce3a1)" d="M 613.565871 152.683794 
+    <path clip-path="url(#p3485856825)" d="M 613.565871 152.683794 
 L 613.565871 247.812868 
 L 614.473065 266.645455 
 L 615.380259 266.645455 
@@ -16034,10 +16392,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="m3a0524a769" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m5c126e1bf3" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="83.764489" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="83.764489" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_1">
@@ -16187,7 +16545,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="170.855127" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="170.855127" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_2">
@@ -16209,7 +16567,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="257.945765" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="257.945765" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_3">
@@ -16231,7 +16589,7 @@ z
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="345.036403" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="345.036403" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_4">
@@ -16253,7 +16611,7 @@ z
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="432.127041" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="432.127041" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_5">
@@ -16309,7 +16667,7 @@ z
     <g id="xtick_6">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="519.217679" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="519.217679" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_6">
@@ -16352,7 +16710,7 @@ z
     <g id="xtick_7">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="606.308317" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="606.308317" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_7">
@@ -16401,7 +16759,7 @@ z
     <g id="xtick_8">
      <g id="line2d_8">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="693.398956" xlink:href="#m3a0524a769" y="279"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="693.398956" xlink:href="#m5c126e1bf3" y="279"/>
       </g>
      </g>
      <g id="text_8">
@@ -16517,10 +16875,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="m08dea149b1" style="stroke:#000000;stroke-width:0.8;"/>
+" id="mac5acc30d2" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="266.645455"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="266.645455"/>
       </g>
      </g>
      <g id="text_10">
@@ -16533,7 +16891,7 @@ L -3.5 0
     <g id="ytick_2">
      <g id="line2d_10">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="215.645574"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="215.645574"/>
       </g>
      </g>
      <g id="text_11">
@@ -16549,7 +16907,7 @@ L -3.5 0
     <g id="ytick_3">
      <g id="line2d_11">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="164.645694"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="164.645694"/>
       </g>
      </g>
      <g id="text_12">
@@ -16565,7 +16923,7 @@ L -3.5 0
     <g id="ytick_4">
      <g id="line2d_12">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="113.645814"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="113.645814"/>
       </g>
      </g>
      <g id="text_13">
@@ -16581,7 +16939,7 @@ L -3.5 0
     <g id="ytick_5">
      <g id="line2d_13">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="62.645934"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="62.645934"/>
       </g>
      </g>
      <g id="text_14">
@@ -16597,7 +16955,7 @@ L -3.5 0
     <g id="ytick_6">
      <g id="line2d_14">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#m08dea149b1" y="11.646053"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="53.328125" xlink:href="#mac5acc30d2" y="11.646053"/>
       </g>
      </g>
      <g id="text_15">
@@ -16742,7 +17100,7 @@ z
     </g>
    </g>
    <g id="line2d_15">
-    <path clip-path="url(#pc6e20ce3a1)" d="M 83.764489 264.687342 
+    <path clip-path="url(#p3485856825)" d="M 83.764489 264.687342 
 L 89.207654 264.666489 
 L 90.114848 238.651224 
 L 91.929236 136.58301 
@@ -17271,7 +17629,7 @@ L 692.491761 214.265971
 " style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:0.8;"/>
    </g>
    <g id="line2d_16">
-    <path clip-path="url(#pc6e20ce3a1)" d="M 83.764489 266.645455 
+    <path clip-path="url(#p3485856825)" d="M 83.764489 266.645455 
 L 89.207654 266.645455 
 L 90.114848 234.315268 
 L 91.022042 169.302901 
@@ -17782,27 +18140,27 @@ L 722.928125 7.2
    </g>
    <g id="legend_1">
     <g id="patch_7">
-     <path d="M 591.345781 64.437813 
+     <path d="M 588.898281 64.437813 
 L 715.228125 64.437813 
 Q 717.428125 64.437813 717.428125 62.237813 
 L 717.428125 14.9 
 Q 717.428125 12.7 715.228125 12.7 
-L 591.345781 12.7 
-Q 589.145781 12.7 589.145781 14.9 
-L 589.145781 62.237813 
-Q 589.145781 64.437813 591.345781 64.437813 
+L 588.898281 12.7 
+Q 586.698281 12.7 586.698281 14.9 
+L 586.698281 62.237813 
+Q 586.698281 64.437813 588.898281 64.437813 
 z
 " style="fill:#ffffff;opacity:0.8;stroke:#cccccc;stroke-linejoin:miter;"/>
     </g>
     <g id="line2d_17">
-     <path d="M 593.545781 21.608281 
-L 615.545781 21.608281 
+     <path d="M 591.098281 21.608281 
+L 613.098281 21.608281 
 " style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:0.8;"/>
     </g>
     <g id="line2d_18"/>
     <g id="text_17">
      <!-- Observation -->
-     <g transform="translate(624.345781 25.458281)scale(0.11 -0.11)">
+     <g transform="translate(621.898281 25.458281)scale(0.11 -0.11)">
       <defs>
        <path d="M 2522 4238 
 Q 1834 4238 1429 3725 
@@ -17980,14 +18338,14 @@ z
      </g>
     </g>
     <g id="line2d_19">
-     <path d="M 593.545781 37.754219 
-L 615.545781 37.754219 
+     <path d="M 591.098281 37.754219 
+L 613.098281 37.754219 
 " style="fill:none;stroke:#1f77b4;stroke-dasharray:1.85,0.8;stroke-dashoffset:0;stroke-width:0.5;"/>
     </g>
     <g id="line2d_20"/>
     <g id="text_18">
      <!-- Median -->
-     <g transform="translate(624.345781 41.604219)scale(0.11 -0.11)">
+     <g transform="translate(621.898281 41.604219)scale(0.11 -0.11)">
       <defs>
        <path d="M 628 4666 
 L 1569 4666 
@@ -18041,16 +18399,16 @@ z
      </g>
     </g>
     <g id="patch_8">
-     <path d="M 593.545781 57.750156 
-L 615.545781 57.750156 
-L 615.545781 50.050156 
-L 593.545781 50.050156 
+     <path d="M 591.098281 57.750156 
+L 613.098281 57.750156 
+L 613.098281 50.050156 
+L 591.098281 50.050156 
 z
 " style="fill:#87ceeb;fill-opacity:0.3;stroke:#87ceeb;stroke-linejoin:miter;stroke-opacity:0.3;"/>
     </g>
     <g id="text_19">
-     <!-- 95% percentiles -->
-     <g transform="translate(624.345781 57.750156)scale(0.11 -0.11)">
+     <!-- 95% uncertainty -->
+     <g transform="translate(621.898281 57.750156)scale(0.11 -0.11)">
       <defs>
        <path d="M 4653 2053 
 Q 4381 2053 4226 1822 
@@ -18099,32 +18457,28 @@ Q 353 4063 643 4406
 Q 934 4750 1428 4750 
 z
 " id="DejaVuSans-25" transform="scale(0.015625)"/>
-       <path d="M 1159 525 
-L 1159 -1331 
-L 581 -1331 
-L 581 3500 
-L 1159 3500 
-L 1159 2969 
-Q 1341 3281 1617 3432 
-Q 1894 3584 2278 3584 
-Q 2916 3584 3314 3078 
-Q 3713 2572 3713 1747 
-Q 3713 922 3314 415 
-Q 2916 -91 2278 -91 
-Q 1894 -91 1617 61 
-Q 1341 213 1159 525 
+       <path d="M 544 1381 
+L 544 3500 
+L 1119 3500 
+L 1119 1403 
+Q 1119 906 1312 657 
+Q 1506 409 1894 409 
+Q 2359 409 2629 706 
+Q 2900 1003 2900 1516 
+L 2900 3500 
+L 3475 3500 
+L 3475 0 
+L 2900 0 
+L 2900 538 
+Q 2691 219 2414 64 
+Q 2138 -91 1772 -91 
+Q 1169 -91 856 284 
+Q 544 659 544 1381 
 z
-M 3116 1747 
-Q 3116 2381 2855 2742 
-Q 2594 3103 2138 3103 
-Q 1681 3103 1420 2742 
-Q 1159 2381 1159 1747 
-Q 1159 1113 1420 752 
-Q 1681 391 2138 391 
-Q 2594 391 2855 752 
-Q 3116 1113 3116 1747 
+M 1991 3584 
+L 1991 3584 
 z
-" id="DejaVuSans-70" transform="scale(0.015625)"/>
+" id="DejaVuSans-75" transform="scale(0.015625)"/>
        <path d="M 3122 3366 
 L 3122 2828 
 Q 2878 2963 2633 3030 
@@ -18146,36 +18500,46 @@ Q 2378 3584 2631 3529
 Q 2884 3475 3122 3366 
 z
 " id="DejaVuSans-63" transform="scale(0.015625)"/>
-       <path d="M 603 4863 
-L 1178 4863 
-L 1178 0 
-L 603 0 
-L 603 4863 
+       <path d="M 2059 -325 
+Q 1816 -950 1584 -1140 
+Q 1353 -1331 966 -1331 
+L 506 -1331 
+L 506 -850 
+L 844 -850 
+Q 1081 -850 1212 -737 
+Q 1344 -625 1503 -206 
+L 1606 56 
+L 191 3500 
+L 800 3500 
+L 1894 763 
+L 2988 3500 
+L 3597 3500 
+L 2059 -325 
 z
-" id="DejaVuSans-6c" transform="scale(0.015625)"/>
+" id="DejaVuSans-79" transform="scale(0.015625)"/>
       </defs>
       <use xlink:href="#DejaVuSans-39"/>
       <use x="63.623047" xlink:href="#DejaVuSans-35"/>
       <use x="127.246094" xlink:href="#DejaVuSans-25"/>
       <use x="222.265625" xlink:href="#DejaVuSans-20"/>
-      <use x="254.052734" xlink:href="#DejaVuSans-70"/>
-      <use x="317.529297" xlink:href="#DejaVuSans-65"/>
-      <use x="379.052734" xlink:href="#DejaVuSans-72"/>
-      <use x="417.916016" xlink:href="#DejaVuSans-63"/>
-      <use x="472.896484" xlink:href="#DejaVuSans-65"/>
-      <use x="534.419922" xlink:href="#DejaVuSans-6e"/>
-      <use x="597.798828" xlink:href="#DejaVuSans-74"/>
-      <use x="637.007812" xlink:href="#DejaVuSans-69"/>
-      <use x="664.791016" xlink:href="#DejaVuSans-6c"/>
-      <use x="692.574219" xlink:href="#DejaVuSans-65"/>
-      <use x="754.097656" xlink:href="#DejaVuSans-73"/>
+      <use x="254.052734" xlink:href="#DejaVuSans-75"/>
+      <use x="317.431641" xlink:href="#DejaVuSans-6e"/>
+      <use x="380.810547" xlink:href="#DejaVuSans-63"/>
+      <use x="435.791016" xlink:href="#DejaVuSans-65"/>
+      <use x="497.314453" xlink:href="#DejaVuSans-72"/>
+      <use x="538.427734" xlink:href="#DejaVuSans-74"/>
+      <use x="577.636719" xlink:href="#DejaVuSans-61"/>
+      <use x="638.916016" xlink:href="#DejaVuSans-69"/>
+      <use x="666.699219" xlink:href="#DejaVuSans-6e"/>
+      <use x="730.078125" xlink:href="#DejaVuSans-74"/>
+      <use x="769.287109" xlink:href="#DejaVuSans-79"/>
      </g>
     </g>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="pc6e20ce3a1">
+  <clipPath id="p3485856825">
    <rect height="271.8" width="669.6" x="53.328125" y="7.2"/>
   </clipPath>
  </defs>
@@ -18189,6 +18553,12 @@ z
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h1><p>As shown in Figure 11 in the paper, the model automatically updates model parameters when new HC operation is observed. In the below code, the model predicts for the several weeks of data and updates whenever necessary. The results are not explicitly visualized in this notebook, but the purpose of below code is to give how to do it.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -18651,20 +19021,6 @@ Model time_interval from previous training output is 15.0 minutes. If not please
 
 </div>
 
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
-</div>
-</div>
 </div>
 
 </div>
