@@ -13,7 +13,6 @@ from rhced.data_utils import *
 
 def unit_prediction(unitcode,bldg,start_date,end_date,output_path,new_training=False,force_update=False,n_samples=10000,n_training=60000,n_inference=3,max_values={},time_interval=15):
     
-    #time_interval=
 
     n_days=int(((pd.Timestamp(end_date)-pd.Timestamp(start_date)).total_seconds())/(3600*24)+1)
     input_values_path=output_path.joinpath(f"input_values_{start_date}_{end_date}.pickle")
