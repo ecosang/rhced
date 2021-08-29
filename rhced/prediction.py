@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from theano import tensor as tt
 import pickle
-import feather
+import pyarrow.feather as feather
 import re
 
 __all__=['posterior_prediction','posterior_outputs','unit_prediction']
@@ -93,7 +93,7 @@ def unit_prediction(unitcode,bldg,start_date,end_date,output_path,new_training=F
 
     
     df=posterior_outputs(input_values,outputs)
-    feather.write_dataframe(df,output_path.joinpath(f'df_{start_date}_{end_date}.feather').__str__())
+    feather.write_feather(df,output_path.joinpath(f'df_{start_date}_{end_date}.feather').__str__())
     print(f"feather file is created at {output_path.joinpath(f'df_{start_date}_{end_date}.feather').__str__()}")
     print(f"lower: {np.nanmean(df['P_hc_lower'])/1000*24*n_days}")
     print(f"median: {np.nanmean(df['P_hc_mid'])/1000*24*n_days}")

@@ -1,3 +1,7 @@
+'''
+Collections of several functions that used to data pre-processing.
+'''
+
 __all__=["detect_operation","min_max_scale","min_max_recover","filter_na_outlier","scale_by_name","detect_defrost","nan_mean","create_unit_input","create_input_values","get_scale_const_template","get_last_outputs","get_wetbulb"]
 import numpy as np
 import pandas as pd
@@ -7,59 +11,95 @@ import pickle
 #from metpy.units import units
 import psypy.psySI as SI 
 
-def psypy_wb(temp,rh):
-    '''Create toy dataset.
+def psypy_wb(temp,rh,p_atm=101325):
+    '''Calculate Wet-bulb temperature from dry-bulb temperature and relative humidity via psypy package.
     Args:
-        seed (int): seed number for random number generation.
-    Raises:
+        temp (numeric): temperature in celsius [C].
+        rh (numeric): relative humidity in 0-1 scale [-].
+        p_atm (numeric) : atmospheric pressure [Pa]. Default is 101325 Pa.
+    Raises: return np.nan when wet-bulb is too low.
     Returns:
-        dims (dictionary): dimension of each variable. 
-        df (dataframe): created toy data as Pandas dataframe.
+        wb (numeric): wet-bulb temperature in celsius. 
     '''
-    temp_k=temp+273.15
+    temp_k=temp+273.15 # Kelvin
     try:
-        S=SI.state("DBT",temp_k,"RH",rh,101325)
-        wb=S[5]-273.15
+        S=SI.state("DBT",temp_k,"RH",rh,p_atm) 
+        wb=S[5]-273.15 # Kelvin to Celsius
     except:
-        wb=np.nan
+        wb=np.nan # return np.nan when wet-bulb is too low.
     return wb
 
 
-def get_wetbulb(temp,rh):
-    #n_data=temp.shape[0]
-    nan_index=np.any(np.isnan(np.stack([temp,rh],axis=1)),axis=1)
-    base_=np.zeros([temp.shape[0]])
-    base_[nan_index]=np.nan
-    n_data=temp[~nan_index].shape[0]
-    vec_psypy_wb=np.vectorize(psypy_wb)
-    #atm=np.repeat(101.325,n_data)
-    # dp=dewpoint_from_relative_humidity(temperature=(temp[~nan_index] * units.degC).to(units.K),
-    #                                 relative_humidity=rh[~nan_index] )#.to(units('degC'))
-    # dp_np=np.array(dp)
-    # wb=wet_bulb_temperature(pressure=atm*units('kPa'),temperature=temp[~nan_index]*units("degC"),dewpoint=dp_np*units("degC"))
-    wb=vec_psypy_wb(temp=temp[~nan_index],rh=rh[~nan_index])
-    base_[~nan_index]=wb
+def get_wetbulb(temp,rh,p_atm=101325):
+    '''Vectorization of wet-bulb calculation (psypy_wb function) while skipping nan.
+    Args:
+        temp (np.array [1d]): temperature in celsius [C].
+        rh (np.array [1d]): relative humidity in 0-1 scale [-].
+        p_atm (np.array [1d] or numeric) : atmospheric pressure [Pa]. Default is 101325 Pa.
+    Raises: 
+    Returns:
+        wb (np.array [1d]): wet-bulb temperature in np.array 
+    '''
+    nan_index=np.any(np.isnan(np.stack([temp,rh],axis=1)),axis=1) # find nan data in row
+    base_=np.zeros([temp.shape[0]]) # original data dimension
+    base_[nan_index]=np.nan # put nan for nan values.
+    n_data=temp[~nan_index].shape[0] # non-nan data
+    vec_psypy_wb=np.vectorize(psypy_wb) # vectorize psypy_wb function 
+    wb=vec_psypy_wb(temp=temp[~nan_index],rh=rh[~nan_index],p_atm=p_atm) # calculate wet-bulb for non-nan data 
+    base_[~nan_index]=wb # put calculated wet-bulb of non-nan data for the original data dimension
     return(base_)
 
-########################### Utility functions used for energyplus ############################
 def min_max_scale(x,x_min,x_max,lower=0.,upper=1.):
-    # min max scale from lower to upper.
+    '''
+    min_max_scale (see rescaling in https://en.wikipedia.org/wiki/Feature_scaling).
+    The data in [x_min,x_max] is linearly rescaled to [lower,upper].
     # it can hanldes np.nan.
-    # helper function
+    Args:
+        x (1d np.array): data that needs to be rescaled.
+        x_min (numeric): minimum value of x. 
+        x_max (numeric): maximum value of x.
+        lower (numeric): minimum value of rescaled x. default is 0. 
+        upper (numeric): maximum value of rescaled x. default is 1.
+    Raises: 
+    Returns:
+        rescaled x (numeric): rescaled x from [x_min,x_max] to [lower,upper] 
+    '''    
     if type(x)!=np.ndarray:
         raise ValueError("Put data as numpy ndarray.format.")
     x=np.array(x)
     return (lower+((x-x_min)*(upper-lower))/(x_max-x_min))
 
 def min_max_recover(x,x_min,x_max,lower=0.,upper=1.):
+    '''
+    reverse of min_max_scale function. The rescaled x is recovered to original scale.
+    The data in [lower,upper] is recovered to [x_min,x_max] range.
     # it can hanldes np.nan.
+    Args:
+        x (1d np.array): data that needs to be rescaled.
+        x_min (numeric): minimum value of x. 
+        x_max (numeric): maximum value of x.
+        lower (numeric): minimum value of rescaled x. default is 0. 
+        upper (numeric): maximum value of rescaled x. default is 1.
+    Raises: 
+    Returns:
+        original scale x (numeric): rescaled x is recovered to [lower,upper] range from [x_min,x_max]. 
+    '''
     if type(x)!=np.ndarray:
         raise ValueError("Put data as numpy ndarray.format.")
-
     x=np.array(x)
     return ((x-lower)*(x_max-x_min)/(upper-lower)+x_min)
 
 def scale_by_name(df,scale_const,var_name):
+    '''
+    Apply min_max_scale for df['var_name']
+    Args:
+        df (pandas dataframe): data frame that contains various variables that needs to be scaled.
+        scale_const (dictionary): dictionary that contains x_min, x_max, lower, and upper for var_name variable in df.
+        var_name (str): a variable that needs to be scaled. One of the columns in df.
+    Raises: 
+    Returns:
+        scaled df['var_name] (numeric): scaled df['var_name] as a numpy array. 
+    '''
     if np.isin(var_name,df.columns).item():
         pass
     else:
@@ -71,12 +111,18 @@ def scale_by_name(df,scale_const,var_name):
     upper=scale_const[f'{var_name}_upper']
     x=df[var_name].to_numpy()
     x_scale=min_max_scale(x,x_min,x_max,lower,upper)
-    #df[var_name]=x_scale
-#     df[var_name]=\
-#             df_scale.apply(lambda x :min_max_scale(x=x['sp_cool'],x_min=t_min,x_max=t_max,lower=-1.,upper=1.),axis=1)
+    #df[var_name]=df_scale.apply(lambda x :min_max_scale(x=x['sp_cool'],x_min=t_min,x_max=t_max,lower=-1.,upper=1.),axis=1)
     return x_scale
 
 def get_scale_const_template():
+    '''
+    The tempelate for scale_const. Feel free to revise for your case.
+
+    Args:
+    Raises: 
+    Returns:
+        scale_const (dictionary): dictionary that contains min, max, lower, upper information of T_out, T_in, wb_in, net, heat, cool,df,aux. 
+    '''
     scale_const={"T_out_max":40.,"T_out_min":-20.,"T_out_upper":1.,"T_out_lower":-1.,\
                 "T_in_max":30.,"T_in_min":10.,"T_in_upper":1.,"T_in_lower":-1.,\
                 "wb_in_max":30.,"wb_in_min":0.,"wb_in_upper":1.,"wb_in_lower":-1.,\
@@ -85,9 +131,8 @@ def get_scale_const_template():
     #-1/3=-1+((0+20)*(1+1))/(40+20) 
     return scale_const
 
-#######################################33
 def get_last_outputs(output_path):
-    # get the latest input_values and prior_values given the output_path
+    # get the latest input_values and prior_values file path given the output_path
     xx=output_path.glob("*")
     xxx=[x for x in xx if (x.is_file()) and (re.search('prior_values',x.__str__())) ]
     last_prior_values_path=xxx[-1]
@@ -157,6 +202,15 @@ def nan_mean(vec):
 
 def create_unit_input(thermostat_data,meter_data,scale_const,time_interval=15,training=False):
 
+    # checking timestamp is pd.Timestamp object.
+    if pd.core.dtypes.common.is_datetime_or_timedelta_dtype(thermostat_data['timestamp']):
+        pass
+    else:
+        thermostat_data['timestamp']=pd.to_datetime(thermostat_data['timestamp'])
+    if pd.core.dtypes.common.is_datetime_or_timedelta_dtype(meter_data['timestamp']):
+        pass
+    else:
+        meter_data['timestamp']=pd.to_datetime(meter_data['timestamp'])
 
     start_date=thermostat_data['timestamp'][0].strftime("%Y-%m-%d")
     end_date=thermostat_data.tail(1)['timestamp'].reset_index(drop=True)[0].strftime("%Y-%m-%d")
@@ -326,54 +380,3 @@ def create_input_values(unit_input,scale_const=None,training=True):
 
     return input_values
 
-
-
-# detect on/off
-# def detect_operation(operation,operation_state,T_out=None,df_cutpoint=0.0):
-#     # operation is vector of operation_state (numpy object vector with string data)
-#     # operation_state is hc system operation state \in {heat1,cool1,aux1,heat1_aux1,idle}
-#     # To detect heatpump heating, it should be ['heat1','heat1_aux1']
-    
-#     if operation.dtype=="O":
-#         pass
-#     else:
-#         # change dtype to Object to have str and nan together
-#         operation=operation.astype("O")    
-#     # check if any 'nan' and put np.nan for the Object type vector 
-#     if np.any(operation==str(np.nan)):
-#         operation[operation==str(np.nan)]=np.nan
-    
-#     if type(operation_state)==np.ndarray:
-#         if operation_state.dtype=="O":
-#             pass
-#         else:
-#             operation_state=operation_state.astype("O")
-#     else:
-#         operation_state=np.array([operation_state],dtype=object).flatten()
-
-
-#     i_vec=np.zeros_like(operation).astype("float32")
-#     # put nan for missing inputs
-#     i_vec[pd.isna(operation)]=np.nan
-#     i_vec_on=i_vec.copy()
-#     i_vec_off=i_vec.copy()
-    
-#     i_vec[(np.isin(operation,operation_state)&(~pd.isna(operation)))]=1.0
-#     # for t in np.arange(1,len(i_vec)):
-#         # if (~np.isnan(i_vec[t-1])&~np.isnan(i_vec[t])) & ((i_vec[t-1]==0)&(i_vec[t]==1)):
-#             # # check device idle -> on
-#             # i_vec_on[t]=1
-#         # if (~np.isnan(i_vec[t-1])&~np.isnan(i_vec[t])) & ((i_vec[t-1]==1)&(i_vec[t]==0)):
-#             # # check device on -> idle
-#             # if (t==1):
-#                 # i_vec_off[t-1]=1
-#             # elif ((i_vec[t-2]==0)&(i_vec[t-1]==1)&(i_vec[t]==0)):
-#                 # # check if idle -> on -> idle. In this case it is just on state
-#                 # pass
-#             # else:
-#                 # i_vec_off[t-1]=1
-#     # i_vec[i_vec_on==1]=0
-#     # i_vec[i_vec_off==1]=0
-    
-    
-#     return i_vec #,i_vec_on,i_vec_off
